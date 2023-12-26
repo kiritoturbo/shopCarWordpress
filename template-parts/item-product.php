@@ -1,0 +1,202 @@
+<?php global $product; ?>
+<?php                                         
+    $regular_price = $product->get_regular_price();
+    $sale_price = $product->get_sale_price();
+    $product_id = $product->get_id();
+    $product_name = $product->get_name();
+
+?>
+<div class="itemProduct relative">
+    <a href="<?php the_permalink(); ?>">
+        <div class="imgProduct">
+            <?php echo get_the_post_thumbnail(get_the_ID(), 'thumnail', array( 'class' =>'thumnail') ); ?>
+        </div>
+        <h3 class="titleProduct uppercase"><?php the_title(); ?></h3>
+        <div class="priceProduct flex items-center flex-col">
+                <span class="lastPriceProduct"><?php if($sale_price ==0){ echo ''; } else{echo wc_price($sale_price);}  ?></span>
+                <span class="afterPriceProduct"><?php if($sale_price ==0) {echo '<span class="lastPriceProduct">'.wc_price($regular_price).'</span>'; } else{ echo wc_price($regular_price);}?></span>
+        </div>
+    </a>
+    <?php if($product->is_on_sale()){?>
+        <div class="couponTotal absolute">
+            <span class="couponNumber">-<?php echo percenSale($regular_price,$sale_price); ?>%</span>
+        </div>
+    <?php } ?>
+
+    <div class="groupWidget absolute">
+        <div class="itemGroupWidget">
+            <a href="#" class="add-to-cart-button" data-product-id="<?php echo esc_attr($product_id); ?>" data-ajax-done="false">
+                <i class="fas fa-shopping-basket"></i>
+            </a>
+        </div>
+        <div class="itemGroupWidget">
+            <a href="#" class="favorite-button" data-product-id="<?php echo esc_attr($product_id); ?>">
+                <i class="far fa-heart"></i>
+            </a>
+        </div>
+        <div class="itemGroupWidget">
+            <a href="#" class="add-to-compare-button"  data-product-id="<?php echo esc_attr($product_id); ?>" data-product-name="<?php echo esc_attr($product_name); ?>">
+                <i class="fas fa-retweet"></i>
+            </a>
+        </div>
+        <div class="itemGroupWidget">
+            <a href="#" class="open-quick-view" data-product-id="<?php echo esc_attr($product_id); ?>">
+                <i class="far fa-eye"></i>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="quick-view relative" id="quick-view-<?php echo esc_attr($product_id); ?>">
+    <section class="container flex ">   
+        <section class="thumnailSlider">
+            <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="swiper mySwiper2">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <?php echo $product->get_image();?>
+                    </div>
+                    <div class="swiper-slide">
+                        <?php echo $product->get_image();?>
+                    </div>
+                    <div class="swiper-slide">
+                        <?php echo $product->get_image();?>
+                    </div>
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+            <div thumbsSlider="" class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <?php 
+                    if (!empty($product_images)) {
+                        foreach ($product_images as $image_url) {
+                            echo '<img src="' . esc_url($image_url) . '" alt="Product Image" />';
+                            ?>
+                                <div class="swiper-slide">
+                                    <?php echo esc_url($image_url);?>
+                                </div>
+                            <?php 
+                        }
+                    } else {
+                        ?>
+                            <div class="swiper-slide">
+                                <?php echo $product->get_image();?>
+                            </div>
+                            <div class="swiper-slide">
+                                <?php echo $product->get_image();?>
+                            </div>
+                            <div class="swiper-slide">
+                                <?php echo $product->get_image();?>
+                            </div>
+                        <?php
+                    }
+                    ?>
+                </div>
+            </div>
+        </section>
+        <section class="descriptPriceProduct">
+            <section class="wrapperSingleProduct">
+                <h1 class="titleSingleProduct"><?php the_title(); ?></h1>
+                <div class="contentDesSingle">
+                    <div class="contentDescript">
+                        <div class="contentDescriptBox">
+                            <?php 
+                            the_excerpt();
+                            ?>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <span class="labelSKU">
+                            Giá bán:
+                        </span>
+                        <div class="contentPrice">
+                            <?php
+                                // Lấy giá sản phẩm
+                                $regular_price = $product->get_regular_price();
+                                $sale_price = $product->get_sale_price();
+                                
+                                if ($product->is_on_sale()) {
+                                    // Hiển thị giá khuyến mãi nếu có
+                                    echo '<span class="priceAfterCoupon">' . wc_price($sale_price) . '</span>';
+                                    echo '<span class="priceBeforeCoupon">' . wc_price($regular_price) . '</span>';
+                                } else {
+                                    // Hiển thị giá thông thường nếu không có khuyến mãi
+                                    echo '<span class="priceAfterCoupon">' . wc_price($regular_price) . '</span>';
+                                }
+                            ?>
+                        </div>
+                    </div>
+                    
+                    <div class="contentBrand">
+                        <div class="contentBrandBox">
+                            <span class="labelSKU">
+                                Thương hiệu:
+                            </span>
+                            <span class="descriptLabelSKU">
+                                <?php
+                                    
+                                    echo $product->get_categories();
+                                ?>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="contentSKU">
+                        <div class="contentSKUBox">
+                            <span class="labelSKU">
+                                Mã SP:
+                            </span>
+                            <span class="descriptLabelSKU">
+                            <?php 
+                            if($product->get_sku()){
+                                echo $product->get_sku(); 
+
+                            }else{echo 'HTDT32-23';}
+                            ?>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="contentAddCart">
+                        <div class="contentAddCartBox flex items-center">
+                            <div class="addAcount flex items-center">
+                                <div class="numberProduct">
+                                    <div class="soluongProduct">
+                                        <input value="1" name="" type="number" placeholder="" inputmode="numeric" autocomplete="off">
+                                    </div>
+                                    <span class="increaseNumber">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                    <span class="descreaseNumber">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </div>
+                                <div class="addCartAcount">
+                                    <span class="iconAddCart">
+                                        <i class="fas fa-cart-arrow-down"></i>
+                                    </span>
+                                    
+                                    <a href="<?php echo esc_url($product->add_to_cart_url())?>" class="addCart">Thêm vào giỏ hàng</a>
+                                </div>
+                            </div>
+                            <div class="compareHeart">
+                                <div class="compareProductAdd">
+                                    <a href="" class="compareItem">
+                                        <i class="fas fa-retweet"></i>
+                                    </a>
+                                </div>
+                                <div class="heartProductAdd">
+                                    <a href="" class="heartItem">
+                                        <i class="far fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="shareSocials">
+
+                    </div>
+                </div>
+            </section>
+        </section>
+    </section>
+    <a href="#" class="close-quick-view absolute" data-product-id="<?php echo esc_attr($product_id); ?>"><i class="fas fa-times"></i></a>
+</div>
